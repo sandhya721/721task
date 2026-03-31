@@ -1,18 +1,26 @@
 version: 0.2
-
+ 
 phases:
   pre_build:
     commands:
-      - echo Logging in to ECR
+      - echo Logging in to Amazon ECR
       - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 850610451136.dkr.ecr.eu-north-1.amazonaws.com
-
+      - REPOSITORY_URI=850610451136.dkr.ecr.eu-north-1.amazonaws.com/my-app
+      - IMAGE_TAG=latest
+ 
   build:
     commands:
       - echo Build started
       - docker build -t my-app .
-      - docker tag my-app:latest 850610451136.dkr.ecr.eu-north-1.amazonaws.com/my-app
-
+      - docker tag my-app:latest $REPOSITORY_URI:$IMAGE_TAG
+ 
   post_build:
     commands:
-      - echo Pushing image
-      - docker push 850610451136.dkr.ecr.eu-north-1.amazonaws.com/my-app
+      - echo Pushing image to ECR
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Creating imagedefinitions.json for ECS deploy
+      - printf '[{"name":"my-app-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+ 
+artifacts:
+  files:
+    - imagedefinitions.json
