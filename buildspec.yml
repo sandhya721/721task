@@ -18,7 +18,7 @@ post_build:
 commands:
 - echo Pushing image to ECR
 - docker push $REPOSITORY_URI:$IMAGE_TAG
-- echo Creating imagedefinitions.json for ECS deploy
+- echo Creating imagedefinitions.json
 - printf '[{"name":"Task33","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 
 artifacts:
