@@ -3,12 +3,17 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo Installing...
+      - echo Logging in to Amazon ECR...
+
+  pre_build:
+    commands:
+      - echo Pre build phase
 
   build:
     commands:
-      - echo Building...
+      - echo Build started
+      - docker build -t my-app .
 
   post_build:
     commands:
-      - echo Done
+      - echo Build completed
